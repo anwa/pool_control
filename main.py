@@ -28,3 +28,25 @@ class PoolControlApp(App):
 
 if __name__ == "__main__":
     PoolControlApp().run()
+
+
+# from sensors.mcp23017_io import MCP23017IO, InputName, OutputName
+#
+# mcp = MCP23017IO()
+#
+## Eingänge lesen
+# alle_eingaenge = mcp.read_inputs()
+# uv_eingang = mcp.read_inputs(InputName.UV)
+# salz_eingang = mcp.read_inputs("salz")
+# pumpe_eingang = mcp.read_inputs(3)
+#
+## Ausgänge lesen
+# alle_ausgaenge = mcp.read_outputs()
+# pumpe_ausgang = mcp.read_outputs(OutputName.PUMPE)
+# uv_ausgang = mcp.read_outputs("uv")
+# wp_ausgang = mcp.read_outputs(3)
+#
+## Ausgänge setzen
+# mcp.set_output(OutputName.PUMPE, True)
+# mcp.set_output("uv", False)
+# mcp.set_output(2, True)
