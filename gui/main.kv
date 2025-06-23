@@ -1,0 +1,44 @@
+<MainScreen>:
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 0.1, 0.3, 0.5, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        size_hint_y: 0.15
+        orientation: 'vertical'
+        Label:
+            text: "Pool Control"
+            font_size: '40sp'
+            bold: True
+            halign: 'center'
+        Label:
+            text: root.date_time
+            font_size: '20sp'
+            halign: 'center'
+
+    BoxLayout:
+        id: values_box
+        orientation: 'vertical'
+        size_hint_y: 0.7
+        # Hier dynamisch Messwerte einfügen (z.B. Pool Temperatur, PH, etc.)
+
+    BoxLayout:
+        size_hint_y: 0.15
+        orientation: 'horizontal'
+        Label:
+            text: root.ip_address
+            font_size: '12sp'
+            halign: 'left'
+        Label:
+            text: ""
+        Image:
+            source: 'gui/icons/wifi.png'
+            size_hint_x: 0.1
+        Label:
+            text: root.wifi_strength + " dBm"
+            font_size: '12sp'
+            halign: 'right'

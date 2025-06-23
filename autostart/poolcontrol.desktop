@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Pool Control
+Exec=/home/pool/controller/venv/bin/python /home/pool/controller/main.py
+X-GNOME-Autostart-enabled=true
+
+# Kopiere diese Datei nach /home/pool/.config/autostart/.
