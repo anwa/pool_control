@@ -15,6 +15,9 @@ class MainScreen(BoxLayout):
     ph_value = StringProperty("7.2")
     pool_temp = StringProperty("24.5 °C")
     tds_value = StringProperty("800 ppm")
+    pool_power = StringProperty("2975 W")
+    pool_energy_today = StringProperty("11.30 kWh")
+    pool_energy_yesterday = StringProperty("21.65 kWh")
     # Properties für Relais-Schalter
     pumpe_state = BooleanProperty(False)
     pumpe_power = StringProperty("450 W")
@@ -26,9 +29,6 @@ class MainScreen(BoxLayout):
     wp_power = StringProperty("2350 W")
     licht_state = BooleanProperty(False)
     hlicht_state = BooleanProperty(False)
-    pool_power = StringProperty("2975 W")
-    pool_energy_today = StringProperty("11.30 kWh")
-    pool_energy_yesterday = StringProperty("21.65 kWh")
     # Properties für Fußbereich
     ip_address = StringProperty("192.168.1.100")
     wifi_strength = StringProperty("-60 dBm")
