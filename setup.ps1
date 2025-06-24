@@ -20,13 +20,13 @@ Write-Host "Aktiviere virtuelle Umgebung..."
 . .\venv\Scripts\Activate.ps1
 
 # Bibliotheken installieren
-if (Test-Path "requirements.txt") {
-    Write-Host "Installiere Bibliotheken aus requirements.txt..."
-    pip install -r requirements.txt
+if (Test-Path "requirements-windows.txt") {
+    Write-Host "Installiere Bibliotheken aus requirements-windows.txt..."
+    pip install -r requirements-windows.txt
 } else {
-    Write-Host "requirements.txt nicht gefunden. Installiere Standard-Bibliotheken."
-    pip install kivy smbus2 paho-mqtt
-    Write-Host "Erstelle requirements.txt..."
+    Write-Host "requirements-windows.txt nicht gefunden. Installiere Standard-Bibliotheken."
+    pip install kivy paho-mqtt
+    Write-Host "Erstelle requirements-windows.txt..."
     pip freeze | Out-File -Encoding UTF8 requirements.txt
 }
 

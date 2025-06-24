@@ -17,12 +17,12 @@ python -m venv venv
 source venv/bin/activate
 
 # Bibliotheken installieren
-if [ -f "requirements.txt" ]; then
-  pip install -r requirements.txt
+if [ -f "requirements-linux.txt" ]; then
+  pip install -r requirements-linux.txt
 else
-  echo "requirements.txt nicht gefunden. Installiere Standard-Bibliotheken."
+  echo "requirements-linux.txt nicht gefunden. Installiere Standard-Bibliotheken."
   pip install kivy smbus2 paho-mqtt
-  pip freeze > requirements.txt
+  pip freeze > requirements-linux.txt
 fi
 
 echo "Setup abgeschlossen. Virtuelle Umgebung ist aktiviert."
