@@ -24,8 +24,8 @@ def get_wifi_strength():
             if "Link Quality" in line:
                 parts = line.strip().split()
                 for part in parts:
-                    if "Signal" in part:
-                        signal = int(part.split("=")[1].replace("dBm", ""))
+                    if "level" in part:
+                        signal = int(part.split("=")[1])
                         logger.info(f"WLAN Signalstärke: {signal} dBm")
                         return signal
     except Exception as e:
