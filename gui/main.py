@@ -66,6 +66,8 @@ class MainScreen(BoxLayout):
         self.mqtt_client.subscribe("GTN/Pool/WP/tele/SENSOR")
         self.mqtt_client.subscribe("GTN/Pool/Licht/stat/POWER")
         self.mqtt_client.subscribe("GTN/Pool/Haus-Licht/stat/POWER")
+        self.mqtt_client.subscribe("GTN/Pool/Controller/tele/current_temp")
+        self.mqtt_client.subscribe("GTN/Pool/Controller/stat/target_temp")
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
         logger.info(f"Connected to MQTT Broker with code: {rc}")
