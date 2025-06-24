@@ -1,44 +1,265 @@
 <MainScreen>:
     orientation: 'vertical'
-    canvas.before:
-        Color:
-            rgba: 0.1, 0.3, 0.5, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
 
+    # Kopfbereich
     BoxLayout:
-        size_hint_y: 0.15
+        id: header
+        size_hint_y: None
+        height: '80dp'
         orientation: 'vertical'
+        padding: '10dp'
+        spacing: '5dp'
+        canvas.before:
+            Color:
+                rgba: 0.1, 0.3, 0.5, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         Label:
             text: "Pool Control"
-            font_size: '40sp'
+            font_size: '32sp'
             bold: True
+            color: 1,1,1,1
             halign: 'center'
+            valign: 'middle'
         Label:
             text: root.date_time
-            font_size: '20sp'
+            font_size: '16sp'
+            color: 1,1,1,1
             halign: 'center'
+            valign: 'middle'
 
+    # Hauptbereich
     BoxLayout:
-        id: values_box
-        orientation: 'vertical'
-        size_hint_y: 0.7
-        # Hier dynamisch Messwerte einfügen (z.B. Pool Temperatur, PH, etc.)
-
-    BoxLayout:
-        size_hint_y: 0.15
         orientation: 'horizontal'
+
+        # Linke Seitenleiste mit Buttons
+        BoxLayout:
+            id: sidebar
+            orientation: 'vertical'
+            size_hint_x: None
+            width: '120dp'
+            spacing: '10dp'
+            padding: '10dp'
+            canvas.before:
+                Color:
+                    rgba: 0.2, 0.2, 0.2, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                text: "Main"
+                font_size: '18sp'
+                on_release: root.show_page('main')
+            Button:
+                text: "Settings"
+                font_size: '18sp'
+                on_release: root.show_page('settings')
+            Button:
+                text: "Info"
+                font_size: '18sp'
+                on_release: root.show_page('info')
+
+        # Mittlerer Bereich für Messwerte
+        BoxLayout:
+            id: center_area
+            orientation: 'vertical'
+            padding: '30dp'
+            spacing: '50dp'
+            # Füllt den verfügbaren Platz
+            Label:
+                text: "Messwerte"
+                font_size: '22sp'
+                text_size: self.size
+                halign: 'center'
+                bold: True
+                size_hint_y: None
+                height: '40dp'
+            GridLayout:
+                cols: 2
+                spacing: '30dp'
+                size_hint_y: None
+                height: self.minimum_height
+                Label:
+                    text: "pH-Wert:"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'right'
+                Label:
+                    text: root.ph_value
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'left'
+                Label:
+                    text: "Pool-Temperatur:"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'right'
+                Label:
+                    text: root.pool_temp
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'left'
+                Label:
+                    text: "TDS:"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'right'
+                Label:
+                    text: root.tds_value
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'left'
+                # Weitere Messwerte nach Bedarf
+
+        # Rechte Seitenleiste mit Schaltern
+        BoxLayout:
+            id: relay_area
+            orientation: 'vertical'
+            size_hint_x: None
+            width: '120dp'
+            padding: '10dp'
+            spacing: '35dp'
+            canvas.before:
+                Color:
+                    rgba: 0.9, 0.9, 0.9, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+            #    height: self.minimum_height
+                height: '48dp'
+                Label:
+                    text: "Pumpe"
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    #valign: 'middle'
+                Switch:
+                    id: pumpe_switch
+                    active: root.pumpe_state
+                    on_active: root.toggle_relay('pumpe', self.active)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+            #    height: self.minimum_height
+                height: '48dp'
+                Label:
+                    text: "UV"
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
+                Switch:
+                    id: uv_switch
+                    active: root.uv_state
+                    on_active: root.toggle_relay('uv', self.active)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+            #    height: self.minimum_height
+                height: '48dp'
+                Label:
+                    text: "Elektrolyse"
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
+                Switch:
+                    id: elektrolyse_switch
+                    active: root.elektrolyse_state
+                    on_active: root.toggle_relay('elektrolyse', self.active)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+            #    height: self.minimum_height
+                height: '48dp'
+                Label:
+                    text: "Wärmepumpe"
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
+                Switch:
+                    id: wp_switch
+                    active: root.wp_state
+                    on_active: root.toggle_relay('wp', self.active)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+            #    height: self.minimum_height
+                height: '48dp'
+                Label:
+                    text: "Pool Licht"
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
+                Switch:
+                    id: licht_switch
+                    active: root.licht_state
+                    on_active: root.toggle_relay('licht', self.active)
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+            #    height: self.minimum_height
+                height: '48dp'
+                Label:
+                    text: "Haus icht"
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
+                Switch:
+                    id: hlicht_switch
+                    active: root.hlicht_state
+                    on_active: root.toggle_relay('hlicht', self.active)
+            # Weitere Schalter nach Bedarf
+
+    # Fußbereich
+    BoxLayout:
+        id: footer
+        size_hint_y: None
+        height: '36dp'
+        #padding: '8dp'
+        #spacing: '8dp'
+        canvas.before:
+            Color:
+                rgba: 0.1, 0.3, 0.5, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         Label:
-            text: root.ip_address
+            text: f"IP: {root.ip_address}"
             font_size: '12sp'
+            text_size: self.size
+            color: 1,1,1,1
             halign: 'left'
-        Label:
-            text: ""
-        Image:
-            source: 'gui/icons/wifi4.png'
+            valign: 'middle'
+            size_hint_x: 0.5
+        Widget:
             size_hint_x: 0.1
-        Label:
-            text: root.wifi_strength + " dBm"
-            font_size: '12sp'
-            halign: 'right'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 0.4
+            spacing: '4dp'
+            Widget:
+            Image:
+                source: 'gui/icons/wifi4.png'
+                size_hint_x: None
+                width: '20dp'
+            Label:
+                text: root.wifi_strength
+                font_size: '12sp'
+                text_size: self.size
+                color: 1,1,1,1
+                halign: 'right'
+                valign: 'middle'
