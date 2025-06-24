@@ -5,6 +5,7 @@ from kivy.clock import Clock
 from datetime import datetime
 from utils.network import get_ip, get_wifi_strength
 import paho.mqtt.client as mqtt
+import json
 
 
 class MainScreen(BoxLayout):
@@ -16,11 +17,18 @@ class MainScreen(BoxLayout):
     tds_value = StringProperty("800 ppm")
     # Properties für Relais-Schalter
     pumpe_state = BooleanProperty(False)
+    pumpe_power = StringProperty("450 W")
     uv_state = BooleanProperty(False)
+    uv_power = StringProperty("75 W")
     elektrolyse_state = BooleanProperty(False)
+    elektrolyse_power = StringProperty("100 W")
     wp_state = BooleanProperty(False)
+    wp_power = StringProperty("2350 W")
     licht_state = BooleanProperty(False)
     hlicht_state = BooleanProperty(False)
+    pool_power = StringProperty("2975 W")
+    pool_energy_today = StringProperty("11.30 kWh")
+    pool_energy_yesterday = StringProperty("21.65 kWh")
     # Properties für Fußbereich
     ip_address = StringProperty("192.168.1.100")
     wifi_strength = StringProperty("-60 dBm")
@@ -46,14 +54,18 @@ class MainScreen(BoxLayout):
         # self.mqtt_client.loop_start()
         # Subscribe auf Status-Topic
         # self.mqtt_client.subscribe("GTN/Pool/Pumpe/stat/POWER")
+        # self.mqtt_client.subscribe("GTN/Pool/Pumpe/tele/SENSOR")
         # self.mqtt_client.subscribe("GTN/Pool/UV/stat/POWER")
+        # self.mqtt_client.subscribe("GTN/Pool/UV/tele/SENSOR")
         # self.mqtt_client.subscribe("GTN/Pool/Salz/stat/POWER")
+        # self.mqtt_client.subscribe("GTN/Pool/Salz/tele/SENSOR")
+        # self.mqtt_client.subscribe("GTN/Pool/WP/stat/POWER")
+        # self.mqtt_client.subscribe("GTN/Pool/WP/tele/SENSOR")
         # self.mqtt_client.subscribe("GTN/Pool/Licht/stat/POWER")
         # self.mqtt_client.subscribe("GTN/Pool/Haus-Licht/stat/POWER")
-        # self.mqtt_client.subscribe("GTN/Pool/WP/stat/POWER")
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
-        print("MQTT verbunden")
+        logger.info("MQTT verbunden")
 
     def on_mqtt_message(self, client, userdata, msg):
         topic = msg.topic
@@ -67,15 +79,31 @@ class MainScreen(BoxLayout):
         if topic == "GTN/Pool/Salz/stat/POWER":
             # Tasmota: "ON" oder "OFF"
             self.elektrolyse_state = payload == "ON"
+        if topic == "GTN/Pool/WP/stat/POWER":
+            # Tasmota: "ON" oder "OFF"
+            self.wp_state = payload == "ON"
         if topic == "GTN/Pool/Licht/stat/POWER":
             # Tasmota: "ON" oder "OFF"
             self.licht_state = payload == "ON"
         if topic == "GTN/Pool/Haus-Licht/stat/POWER":
             # Tasmota: "ON" oder "OFF"
             self.hlicht_state = payload == "ON"
-        if topic == "GTN/Pool/WP/stat/POWER":
-            # Tasmota: "ON" oder "OFF"
-            self.wp_state = payload == "ON"
+        if msg.topic == "GTN/Pool/Pumpe/tele/SENSOR":
+            try:
+                data = json.loads(msg.payload.decode())
+                # ENERGY kann fehlen, daher absichern:
+                energy = data.get("ENERGY", {})
+                power = energy.get("Power")
+                if power is not None:
+                    logger.info(f"Aktuelle Pumpenleistung: {power} W")
+                    # In Kivy-Property schreiben
+                    self.pumpe_power = f"{power} W"
+                else:
+                    logger.info("Power-Wert nicht gefunden!")
+                    self.pumpe_power = "?"
+            except Exception as e:
+                logger.info(f"Fehler beim Parsen: {e}")
+                self.pumpe_power = "?"
 
     def update_time(self, dt):
         self.date_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
@@ -88,11 +116,12 @@ class MainScreen(BoxLayout):
 
     def show_page(self, page_name):
         # Hier kannst du die Seitenumschaltung implementieren
-        print(f"Seite wechseln zu: {page_name}")
+        logger.info(f"Seite wechseln zu: {page_name}")
 
     def toggle_relay(self, relay_name, state):
         # Hier kannst du die Relaissteuerung implementieren
-        print(f"Relais {relay_name} auf {state} gesetzt")
+        logger.info(f"Relais {relay_name} auf {state} gesetzt")
+
         # Beispiel: Property setzen
         if relay_name == "pumpe":
             # Sende MQTT-Kommando, aber setze pumpe_state NICHT direkt!

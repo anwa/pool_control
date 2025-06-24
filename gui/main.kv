@@ -110,6 +110,30 @@
                     font_size: '18sp'
                     text_size: self.size
                     halign: 'left'
+                Label:
+                    text: "Leistung Pool:"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'right'
+                    valign: 'middle'
+                Label:
+                    text: root.pool_power
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'middle'
+                Label:
+                    text: "Verbrauch Pool:"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'right'
+                    valign: 'middle'
+                Label:
+                    text: f"{root.pool_energy_today} / {root.pool_energy_yesterday}"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'middle'
                 # Weitere Messwerte nach Bedarf
 
         # Rechte Seitenleiste mit Schaltern
@@ -119,7 +143,7 @@
             size_hint_x: None
             width: '120dp'
             padding: '10dp'
-            spacing: '35dp'
+            spacing: '20dp'
             canvas.before:
                 Color:
                     rgba: 0.9, 0.9, 0.9, 1
@@ -130,7 +154,8 @@
                 orientation: 'vertical'
                 size_hint_y: None
             #    height: self.minimum_height
-                height: '48dp'
+                height: '70dp'
+            #    spacing: '35dp'
                 Label:
                     text: "Pumpe"
                     font_size: '14sp'
@@ -142,11 +167,18 @@
                     id: pumpe_switch
                     active: root.pumpe_state
                     on_active: root.toggle_relay('pumpe', self.active)
+                Label:
+                    text: root.pumpe_power
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_y: None
             #    height: self.minimum_height
-                height: '48dp'
+                height: '70dp'
                 Label:
                     text: "UV"
                     font_size: '14sp'
@@ -158,11 +190,18 @@
                     id: uv_switch
                     active: root.uv_state
                     on_active: root.toggle_relay('uv', self.active)
+                Label:
+                    text: root.uv_power
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_y: None
             #    height: self.minimum_height
-                height: '48dp'
+                height: '70dp'
                 Label:
                     text: "Elektrolyse"
                     font_size: '14sp'
@@ -174,11 +213,18 @@
                     id: elektrolyse_switch
                     active: root.elektrolyse_state
                     on_active: root.toggle_relay('elektrolyse', self.active)
+                Label:
+                    text: root.elektrolyse_power
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_y: None
             #    height: self.minimum_height
-                height: '48dp'
+                height: '70dp'
                 Label:
                     text: "Wärmepumpe"
                     font_size: '14sp'
@@ -190,6 +236,13 @@
                     id: wp_switch
                     active: root.wp_state
                     on_active: root.toggle_relay('wp', self.active)
+                Label:
+                    text: root.wp_power
+                    font_size: '14sp'
+                    color: 0,0,0,1
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_y: None
@@ -212,7 +265,7 @@
             #    height: self.minimum_height
                 height: '48dp'
                 Label:
-                    text: "Haus icht"
+                    text: "Haus Licht"
                     font_size: '14sp'
                     color: 0,0,0,1
                     text_size: self.size
@@ -229,8 +282,8 @@
         id: footer
         size_hint_y: None
         height: '36dp'
-        #padding: '8dp'
-        #spacing: '8dp'
+        padding: '8dp'
+        spacing: '8dp'
         canvas.before:
             Color:
                 rgba: 0.1, 0.3, 0.5, 1
@@ -252,10 +305,6 @@
             size_hint_x: 0.4
             spacing: '4dp'
             Widget:
-            Image:
-                source: 'gui/icons/wifi4.png'
-                size_hint_x: None
-                width: '20dp'
             Label:
                 text: root.wifi_strength
                 font_size: '12sp'
@@ -263,3 +312,7 @@
                 color: 1,1,1,1
                 halign: 'right'
                 valign: 'middle'
+            Image:
+                source: 'gui/icons/wifi4.png'
+                size_hint_x: None
+                width: '20dp'
