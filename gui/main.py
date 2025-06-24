@@ -18,6 +18,8 @@ class MainScreen(BoxLayout):
     pool_power = StringProperty("2975 W")
     pool_energy_today = StringProperty("11.30 kWh")
     pool_energy_yesterday = StringProperty("21.65 kWh")
+    wp_current_temp = StringProperty("")
+    wp_target_temp = StringProperty("")
     # Properties für Relais-Schalter
     pumpe_state = BooleanProperty(False)
     pumpe_power = StringProperty("450 W")
@@ -77,6 +79,12 @@ class MainScreen(BoxLayout):
     def on_mqtt_message(self, client, userdata, msg):
         topic = msg.topic
         payload = msg.payload.decode()
+        logger.info(f"Topic: {topic} | payload: {payload}")
+        if topic == "GTN/Pool/Controller/stat/target_temp":
+            self.wp_target_temp = payload
+        if topic == "GTN/Pool/Controller/tele/current_temp":
+            self.wp_current_temp = payload
+
         if topic == "GTN/Pool/Pumpe/stat/POWER":
             # Tasmota: "ON" oder "OFF"
             self.pumpe_state = payload == "ON"

@@ -134,6 +134,18 @@
                     text_size: self.size
                     halign: 'left'
                     valign: 'middle'
+                Label:
+                    text: "Wärmepumpe:"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'right'
+                    valign: 'middle'
+                Label:
+                    text: f"{root.wp_current_temp} °C / {root.wp_target_temp} °C"
+                    font_size: '18sp'
+                    text_size: self.size
+                    halign: 'left'
+                    valign: 'middle'
                 # Weitere Messwerte nach Bedarf
 
         # Rechte Seitenleiste mit Schaltern
