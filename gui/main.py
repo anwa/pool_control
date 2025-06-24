@@ -50,22 +50,29 @@ class MainScreen(BoxLayout):
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_mqtt_connect
         self.mqtt_client.on_message = self.on_mqtt_message
-        # self.mqtt_client.connect("10.10.1.30", 1883, 60)
-        # self.mqtt_client.loop_start()
+        self.mqtt_client.username_pw_set("homeassistant", "t4aFDfCNRzqcbb5bUB9y9jcC")
+        self.mqtt_client.connect("10.10.1.30", 1883, 60)
+        self.mqtt_client.loop_start()
         # Subscribe auf Status-Topic
-        # self.mqtt_client.subscribe("GTN/Pool/Pumpe/stat/POWER")
-        # self.mqtt_client.subscribe("GTN/Pool/Pumpe/tele/SENSOR")
-        # self.mqtt_client.subscribe("GTN/Pool/UV/stat/POWER")
-        # self.mqtt_client.subscribe("GTN/Pool/UV/tele/SENSOR")
-        # self.mqtt_client.subscribe("GTN/Pool/Salz/stat/POWER")
-        # self.mqtt_client.subscribe("GTN/Pool/Salz/tele/SENSOR")
-        # self.mqtt_client.subscribe("GTN/Pool/WP/stat/POWER")
-        # self.mqtt_client.subscribe("GTN/Pool/WP/tele/SENSOR")
-        # self.mqtt_client.subscribe("GTN/Pool/Licht/stat/POWER")
-        # self.mqtt_client.subscribe("GTN/Pool/Haus-Licht/stat/POWER")
+        self.mqtt_client.subscribe("GTN/Pool/Pumpe/stat/POWER")
+        self.mqtt_client.subscribe("GTN/Pool/Pumpe/tele/SENSOR")
+        self.mqtt_client.subscribe("GTN/Pool/UV/stat/POWER")
+        self.mqtt_client.subscribe("GTN/Pool/UV/tele/SENSOR")
+        self.mqtt_client.subscribe("GTN/Pool/Salz/stat/POWER")
+        self.mqtt_client.subscribe("GTN/Pool/Salz/tele/SENSOR")
+        self.mqtt_client.subscribe("GTN/Pool/WP/stat/POWER")
+        self.mqtt_client.subscribe("GTN/Pool/WP/tele/SENSOR")
+        self.mqtt_client.subscribe("GTN/Pool/Licht/stat/POWER")
+        self.mqtt_client.subscribe("GTN/Pool/Haus-Licht/stat/POWER")
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
-        logger.info("MQTT verbunden")
+        logger.info(f"Connected to MQTT Broker with code: {rc}")
+        self.mqtt_client.publish("GTN/Pool/Pumpe/cmnd/Power1", payload="", qos=1, retain=False)
+        self.mqtt_client.publish("GTN/Pool/UV/cmnd/Power1", payload="", qos=1, retain=False)
+        self.mqtt_client.publish("GTN/Pool/Salz/cmnd/Power1", payload="", qos=1, retain=False)
+        self.mqtt_client.publish("GTN/Pool/WP/cmnd/Power1", payload="", qos=1, retain=False)
+        self.mqtt_client.publish("GTN/Pool/Licht/cmnd/Power1", payload="", qos=1, retain=False)
+        self.mqtt_client.publish("GTN/Pool/Haus-Licht/cmnd/Power1", payload="", qos=1, retain=False)
 
     def on_mqtt_message(self, client, userdata, msg):
         topic = msg.topic
@@ -104,6 +111,55 @@ class MainScreen(BoxLayout):
             except Exception as e:
                 logger.info(f"Fehler beim Parsen: {e}")
                 self.pumpe_power = "?"
+        if msg.topic == "GTN/Pool/Salz/tele/SENSOR":
+            try:
+                data = json.loads(msg.payload.decode())
+                # ENERGY kann fehlen, daher absichern:
+                energy = data.get("ENERGY", {})
+                power = energy.get("Power")
+                if power is not None:
+                    logger.info(f"Aktuelle Salz-Elektrolyse Leistung: {power} W")
+                    # In Kivy-Property schreiben
+                    self.elektrolyse_power = f"{power} W"
+                else:
+                    logger.info("Power-Wert nicht gefunden!")
+                    self.elektrolyse_power = "?"
+            except Exception as e:
+                logger.info(f"Fehler beim Parsen: {e}")
+                self.elektrolyse_power = "?"
+        if msg.topic == "GTN/Pool/UV/tele/SENSOR":
+            try:
+                data = json.loads(msg.payload.decode())
+                # ENERGY kann fehlen, daher absichern:
+                energy = data.get("ENERGY", {})
+                power = energy.get("Power")
+                if power is not None:
+                    logger.info(f"Aktuelle UV Leistung: {power} W")
+                    # In Kivy-Property schreiben
+                    self.uv_power = f"{power} W"
+                else:
+                    logger.info("Power-Wert nicht gefunden!")
+                    self.uv_power = "?"
+            except Exception as e:
+                logger.info(f"Fehler beim Parsen: {e}")
+                self.uv_power = "?"
+        if msg.topic == "GTN/Pool/WP/tele/SENSOR":
+            try:
+                data = json.loads(msg.payload.decode())
+                # ENERGY kann fehlen, daher absichern:
+                energy = data.get("ENERGY", {})
+                power = energy.get("Power")
+                if power is not None:
+                    logger.info(f"Aktuelle Wärmepumpen Leistung: {power} W")
+                    # In Kivy-Property schreiben
+                    self.wp_power = f"{power} W"
+                else:
+                    logger.info("Power-Wert nicht gefunden!")
+                    self.wp_power = "?"
+            except Exception as e:
+                logger.info(f"Fehler beim Parsen: {e}")
+                self.wp_power = "?"
+
 
     def update_time(self, dt):
         self.date_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
