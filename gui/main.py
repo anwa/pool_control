@@ -6,20 +6,14 @@ from datetime import datetime
 from utils.network import get_ip, get_wifi_strength
 import paho.mqtt.client as mqtt
 import json
+from gui.info import InfoPage
+from gui.messung import MessungPage
+from gui.settings import SettingsPage
 
 
 class MainScreen(BoxLayout):
     # Properties für Kopfbereich
     date_time = StringProperty()
-    # Properties für Messwerte
-    ph_value = StringProperty("7.2")
-    pool_temp = StringProperty("24.5 °C")
-    tds_value = StringProperty("800 ppm")
-    pool_power = StringProperty("2975 W")
-    pool_energy_today = StringProperty("11.30 kWh")
-    pool_energy_yesterday = StringProperty("21.65 kWh")
-    wp_current_temp = StringProperty("")
-    wp_target_temp = StringProperty("")
     # Properties für Relais-Schalter
     pumpe_state = BooleanProperty(False)
     pumpe_power = StringProperty("450 W")
@@ -48,13 +42,17 @@ class MainScreen(BoxLayout):
         Clock.schedule_interval(self.update_ip, 600)
         # WLAN alle 30 Sekunden aktualisieren
         Clock.schedule_interval(self.update_wifi, 30)
+        # Lade InfoPage beim Start
+        Clock.schedule_once(self.show_info, 0)
+        # Nach 10 Sekunden auf Messung wechseln
+        Clock.schedule_once(self.show_messung, 10)
 
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_mqtt_connect
         self.mqtt_client.on_message = self.on_mqtt_message
         self.mqtt_client.username_pw_set("homeassistant", "t4aFDfCNRzqcbb5bUB9y9jcC")
-        self.mqtt_client.connect("10.10.1.30", 1883, 60)
-        self.mqtt_client.loop_start()
+        #        self.mqtt_client.connect("10.10.1.30", 1883, 60)
+        #        self.mqtt_client.loop_start()
         # Subscribe auf Status-Topic
         self.mqtt_client.subscribe("GTN/Pool/Pumpe/stat/POWER")
         self.mqtt_client.subscribe("GTN/Pool/Pumpe/tele/SENSOR")
@@ -71,12 +69,24 @@ class MainScreen(BoxLayout):
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
         logger.info(f"Connected to MQTT Broker with code: {rc}")
-        self.mqtt_client.publish("GTN/Pool/Pumpe/cmnd/Power1", payload="", qos=1, retain=False)
-        self.mqtt_client.publish("GTN/Pool/UV/cmnd/Power1", payload="", qos=1, retain=False)
-        self.mqtt_client.publish("GTN/Pool/Salz/cmnd/Power1", payload="", qos=1, retain=False)
-        self.mqtt_client.publish("GTN/Pool/WP/cmnd/Power1", payload="", qos=1, retain=False)
-        self.mqtt_client.publish("GTN/Pool/Licht/cmnd/Power1", payload="", qos=1, retain=False)
-        self.mqtt_client.publish("GTN/Pool/Haus-Licht/cmnd/Power1", payload="", qos=1, retain=False)
+        self.mqtt_client.publish(
+            "GTN/Pool/Pumpe/cmnd/Power1", payload="", qos=1, retain=False
+        )
+        self.mqtt_client.publish(
+            "GTN/Pool/UV/cmnd/Power1", payload="", qos=1, retain=False
+        )
+        self.mqtt_client.publish(
+            "GTN/Pool/Salz/cmnd/Power1", payload="", qos=1, retain=False
+        )
+        self.mqtt_client.publish(
+            "GTN/Pool/WP/cmnd/Power1", payload="", qos=1, retain=False
+        )
+        self.mqtt_client.publish(
+            "GTN/Pool/Licht/cmnd/Power1", payload="", qos=1, retain=False
+        )
+        self.mqtt_client.publish(
+            "GTN/Pool/Haus-Licht/cmnd/Power1", payload="", qos=1, retain=False
+        )
 
     def on_mqtt_message(self, client, userdata, msg):
         topic = msg.topic
@@ -170,7 +180,6 @@ class MainScreen(BoxLayout):
                 logger.info(f"Fehler beim Parsen: {e}")
                 self.wp_power = "?"
 
-
     def update_time(self, dt):
         self.date_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
@@ -183,6 +192,20 @@ class MainScreen(BoxLayout):
     def show_page(self, page_name):
         # Hier kannst du die Seitenumschaltung implementieren
         logger.info(f"Seite wechseln zu: {page_name}")
+        center_area = self.ids.center_area
+        center_area.clear_widgets()
+        if page_name == "main":
+            center_area.add_widget(MessungPage())
+        elif page_name == "settings":
+            center_area.add_widget(SettingsPage())
+        elif page_name == "info":
+            center_area.add_widget(InfoPage())
+
+    def show_info(self, dt):
+        self.show_page("info")
+
+    def show_messung(self, dt):
+        self.show_page("main")
 
     def toggle_relay(self, relay_name, state):
         # Hier kannst du die Relaissteuerung implementieren

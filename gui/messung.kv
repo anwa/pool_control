@@ -1,0 +1,82 @@
+<MessungPage>:
+    orientation: 'vertical'
+    Label:
+        text: "Messwerte"
+        font_size: '22sp'
+        text_size: self.size
+        halign: 'center'
+        bold: True
+        size_hint_y: None
+        height: '40dp'
+    GridLayout:
+        cols: 2
+        spacing: '30dp'
+        size_hint_y: None
+        height: self.minimum_height
+        Label:
+            text: "pH-Wert:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+        Label:
+            text: root.ph_value
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+        Label:
+            text: "Pool-Temperatur:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+        Label:
+            text: root.pool_temp
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+        Label:
+            text: "TDS:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+        Label:
+            text: root.tds_value
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+        Label:
+            text: "Leistung Pool:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: root.pool_power
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+        Label:
+            text: "Verbrauch Pool:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: f"{root.pool_energy_today} / {root.pool_energy_yesterday}"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+        Label:
+            text: "Wärmepumpe:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: f"{root.wp_current_temp} °C / {root.wp_target_temp} °C"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+        # Weitere Messwerte nach Bedarf
