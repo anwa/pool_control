@@ -19,8 +19,8 @@ class MessungPage(BoxLayout):
     pool_power = StringProperty("2975 W")
     pool_energy_today = StringProperty("11.30 kWh")
     pool_energy_yesterday = StringProperty("21.65 kWh")
-    wp_current_temp = StringProperty("28")
-    wp_target_temp = StringProperty("30")
+    wp_current_temp = StringProperty("0")
+    wp_target_temp = StringProperty("0")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -36,9 +36,7 @@ class MessungPage(BoxLayout):
         Clock.schedule_once(lambda dt: self._update_value(name, value))
 
     def _update_value(self, name, value):
-        if name == "pumpe_power":
-            self.pumpe_power = f"{value} W"
         if name == "wp_current_temp":
-            self.wp_current_temp = f"{value} °C"
-        if name == "wp_current_temp":
-            self.wp_current_temp = f"{value} °C"
+            self.wp_current_temp = f"{value:.0f}"
+        if name == "wp_target_temp":
+            self.wp_target_temp = f"{value:.0f}"
