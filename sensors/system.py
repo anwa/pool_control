@@ -12,18 +12,18 @@ def read_cpu_temperature():
         return temp_celsius
     except Exception as e:
         logger.error(f"Fehler beim Auslesen der CPU-Temperatur: {e}")
-        return "n.a."
+        return 0
 
-def read_cpu_usage(self):
+def read_cpu_usage():
     try:
         usage = psutil.cpu_percent(interval=1)
         logger.debug(f"CPU-Auslastung: {usage:.1f}%")
         return usage
     except Exception as e:
         logger.error(f"Fehler beim Auslesen der CPU-Auslastung: {e}")
-        return "n.a."
+        return 0
 
-def read_memory_usage(self):
+def read_memory_usage():
     try:
         mem = psutil.virtual_memory()
         usage_percent = mem.percent
@@ -31,9 +31,9 @@ def read_memory_usage(self):
         return usage_percent
     except Exception as e:
         logger.error(f"Fehler beim Auslesen der RAM-Nutzung: {e}")
-        return "n.a."
+        return 0
 
-def read_sd_card_usage(self):
+def read_sd_card_usage():
     try:
         result = subprocess.check_output(["df", "-h", "/"]).decode()
         for line in result.splitlines():
@@ -42,7 +42,7 @@ def read_sd_card_usage(self):
                 logger.debug(f"SD-Karten-Nutzung: {usage_percent:.1f}%")
                 return usage_percent
         logger.warning("Keine SD-Karten-Informationen gefunden")
-        return "n.a."
+        return 0
     except Exception as e:
         logger.error(f"Fehler beim Auslesen der SD-Karten-Nutzung: {e}")
-        return "n.a."
+        return 0
