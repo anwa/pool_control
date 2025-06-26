@@ -4,8 +4,11 @@ from kivy.properties import StringProperty, BooleanProperty
 from kivy.clock import Clock
 from datetime import datetime
 from utils.network import get_ip, get_wifi_strength
-import paho.mqtt.client as mqtt
-import json
+from mqtt.mqtt_client import mqtt_client
+from mqtt.topics import cmnd_topics, relay_topics
+
+# import paho.mqtt.client as mqtt
+# import json
 from gui.info import InfoPage
 from gui.messung import MessungPage
 from gui.settings import SettingsPage
@@ -41,80 +44,22 @@ class MainScreen(BoxLayout):
         # IP alle 10 Minuten (600 Sekunden) aktualisieren
         Clock.schedule_interval(self.update_ip, 600)
         # WLAN alle 30 Sekunden aktualisieren
-        Clock.schedule_interval(self.update_wifi, 30)
+        Clock.schedule_interval(self.update_wifi, 10)
         # Lade InfoPage beim Start
         Clock.schedule_once(self.show_info, 0)
         # Nach 10 Sekunden auf Messung wechseln
         Clock.schedule_once(self.show_messung, 10)
+        # MQTT-Subscribe
+        mqtt_client.subscribe_dict(relay_topics, self.on_mqtt_value)
 
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.on_connect = self.on_mqtt_connect
-        self.mqtt_client.on_message = self.on_mqtt_message
-        self.mqtt_client.username_pw_set("homeassistant", "t4aFDfCNRzqcbb5bUB9y9jcC")
-        #        self.mqtt_client.connect("10.10.1.30", 1883, 60)
-        #        self.mqtt_client.loop_start()
-        # Subscribe auf Status-Topic
-        self.mqtt_client.subscribe("GTN/Pool/Pumpe/stat/POWER")
-        self.mqtt_client.subscribe("GTN/Pool/Pumpe/tele/SENSOR")
-        self.mqtt_client.subscribe("GTN/Pool/UV/stat/POWER")
-        self.mqtt_client.subscribe("GTN/Pool/UV/tele/SENSOR")
-        self.mqtt_client.subscribe("GTN/Pool/Salz/stat/POWER")
-        self.mqtt_client.subscribe("GTN/Pool/Salz/tele/SENSOR")
-        self.mqtt_client.subscribe("GTN/Pool/WP/stat/POWER")
-        self.mqtt_client.subscribe("GTN/Pool/WP/tele/SENSOR")
-        self.mqtt_client.subscribe("GTN/Pool/Licht/stat/POWER")
-        self.mqtt_client.subscribe("GTN/Pool/Haus-Licht/stat/POWER")
-        self.mqtt_client.subscribe("GTN/Pool/Controller/tele/current_temp")
-        self.mqtt_client.subscribe("GTN/Pool/Controller/stat/target_temp")
+    def on_mqtt_value(self, name, value):
+        Clock.schedule_once(lambda dt: self._update_value(name, value))
 
-    def on_mqtt_connect(self, client, userdata, flags, rc):
-        logger.info(f"Connected to MQTT Broker with code: {rc}")
-        self.mqtt_client.publish(
-            "GTN/Pool/Pumpe/cmnd/Power1", payload="", qos=1, retain=False
-        )
-        self.mqtt_client.publish(
-            "GTN/Pool/UV/cmnd/Power1", payload="", qos=1, retain=False
-        )
-        self.mqtt_client.publish(
-            "GTN/Pool/Salz/cmnd/Power1", payload="", qos=1, retain=False
-        )
-        self.mqtt_client.publish(
-            "GTN/Pool/WP/cmnd/Power1", payload="", qos=1, retain=False
-        )
-        self.mqtt_client.publish(
-            "GTN/Pool/Licht/cmnd/Power1", payload="", qos=1, retain=False
-        )
-        self.mqtt_client.publish(
-            "GTN/Pool/Haus-Licht/cmnd/Power1", payload="", qos=1, retain=False
-        )
+    def _update_value(self, name, value):
+        setattr(self, name, str(value))
 
+    """
     def on_mqtt_message(self, client, userdata, msg):
-        topic = msg.topic
-        payload = msg.payload.decode()
-        logger.info(f"Topic: {topic} | payload: {payload}")
-        if topic == "GTN/Pool/Controller/stat/target_temp":
-            self.wp_target_temp = payload
-        if topic == "GTN/Pool/Controller/tele/current_temp":
-            self.wp_current_temp = payload
-
-        if topic == "GTN/Pool/Pumpe/stat/POWER":
-            # Tasmota: "ON" oder "OFF"
-            self.pumpe_state = payload == "ON"
-        if topic == "GTN/Pool/UV/stat/POWER":
-            # Tasmota: "ON" oder "OFF"
-            self.uv_state = payload == "ON"
-        if topic == "GTN/Pool/Salz/stat/POWER":
-            # Tasmota: "ON" oder "OFF"
-            self.elektrolyse_state = payload == "ON"
-        if topic == "GTN/Pool/WP/stat/POWER":
-            # Tasmota: "ON" oder "OFF"
-            self.wp_state = payload == "ON"
-        if topic == "GTN/Pool/Licht/stat/POWER":
-            # Tasmota: "ON" oder "OFF"
-            self.licht_state = payload == "ON"
-        if topic == "GTN/Pool/Haus-Licht/stat/POWER":
-            # Tasmota: "ON" oder "OFF"
-            self.hlicht_state = payload == "ON"
         if msg.topic == "GTN/Pool/Pumpe/tele/SENSOR":
             try:
                 data = json.loads(msg.payload.decode())
@@ -131,54 +76,7 @@ class MainScreen(BoxLayout):
             except Exception as e:
                 logger.info(f"Fehler beim Parsen: {e}")
                 self.pumpe_power = "?"
-        if msg.topic == "GTN/Pool/Salz/tele/SENSOR":
-            try:
-                data = json.loads(msg.payload.decode())
-                # ENERGY kann fehlen, daher absichern:
-                energy = data.get("ENERGY", {})
-                power = energy.get("Power")
-                if power is not None:
-                    logger.info(f"Aktuelle Salz-Elektrolyse Leistung: {power} W")
-                    # In Kivy-Property schreiben
-                    self.elektrolyse_power = f"{power} W"
-                else:
-                    logger.info("Power-Wert nicht gefunden!")
-                    self.elektrolyse_power = "?"
-            except Exception as e:
-                logger.info(f"Fehler beim Parsen: {e}")
-                self.elektrolyse_power = "?"
-        if msg.topic == "GTN/Pool/UV/tele/SENSOR":
-            try:
-                data = json.loads(msg.payload.decode())
-                # ENERGY kann fehlen, daher absichern:
-                energy = data.get("ENERGY", {})
-                power = energy.get("Power")
-                if power is not None:
-                    logger.info(f"Aktuelle UV Leistung: {power} W")
-                    # In Kivy-Property schreiben
-                    self.uv_power = f"{power} W"
-                else:
-                    logger.info("Power-Wert nicht gefunden!")
-                    self.uv_power = "?"
-            except Exception as e:
-                logger.info(f"Fehler beim Parsen: {e}")
-                self.uv_power = "?"
-        if msg.topic == "GTN/Pool/WP/tele/SENSOR":
-            try:
-                data = json.loads(msg.payload.decode())
-                # ENERGY kann fehlen, daher absichern:
-                energy = data.get("ENERGY", {})
-                power = energy.get("Power")
-                if power is not None:
-                    logger.info(f"Aktuelle Wärmepumpen Leistung: {power} W")
-                    # In Kivy-Property schreiben
-                    self.wp_power = f"{power} W"
-                else:
-                    logger.info("Power-Wert nicht gefunden!")
-                    self.wp_power = "?"
-            except Exception as e:
-                logger.info(f"Fehler beim Parsen: {e}")
-                self.wp_power = "?"
+    """
 
     def update_time(self, dt):
         self.date_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
@@ -208,27 +106,10 @@ class MainScreen(BoxLayout):
         self.show_page("main")
 
     def toggle_relay(self, relay_name, state):
-        # Hier kannst du die Relaissteuerung implementieren
-        logger.info(f"Relais {relay_name} auf {state} gesetzt")
-
-        # Beispiel: Property setzen
-        if relay_name == "pumpe":
-            # Sende MQTT-Kommando, aber setze pumpe_state NICHT direkt!
-            cmd = "ON" if state else "OFF"
-            self.mqtt_client.publish("GTN/Pool/Pumpe/cmnd/Power1", cmd)
-            # Optional: Timeout/Fehlerbehandlung, falls keine Rückmeldung kommt
-        elif relay_name == "uv":
-            cmd = "ON" if state else "OFF"
-            self.mqtt_client.publish("GTN/Pool/UV/cmnd/Power1", cmd)
-        elif relay_name == "elektrolyse":
-            cmd = "ON" if state else "OFF"
-            self.mqtt_client.publish("GTN/Pool/Salz/cmnd/Power1", cmd)
-        elif relay_name == "wp":
-            cmd = "ON" if state else "OFF"
-            self.mqtt_client.publish("GTN/Pool/WP/cmnd/Power1", cmd)
-        elif relay_name == "licht":
-            cmd = "ON" if state else "OFF"
-            self.mqtt_client.publish("GTN/Pool/Licht/cmnd/Power1", cmd)
-        elif relay_name == "hlicht":
-            cmd = "ON" if state else "OFF"
-            self.mqtt_client.publish("GTN/Pool/Haus-Licht/cmnd/Power1", cmd)
+        cmd = "ON" if state else "OFF"
+        topic = cmnd_topics.get(relay_name)
+        if topic:
+            mqtt_client.publish(topic, cmd)
+            logger.info(f"Relais {relay_name} auf {state} gesetzt")
+        else:
+            logger.info(f"Unbekanntes Relais: {relay_name}")
