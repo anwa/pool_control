@@ -12,7 +12,22 @@
         halign: 'center'
         valign: 'middle'
     Label:
-        text: f"CPU Temperatur: {root.cpu_temp} °C"
+        text: f"CPU-Temperatur: {root.cpu_temp:.1f} °C"
+        font_size: '18sp'
+        halign: 'center'
+        valign: 'middle'
+    Label:
+        text: f"CPU-Auslastung: {root.cpu_use:.1f}%"
+        font_size: '18sp'
+        halign: 'center'
+        valign: 'middle'
+    Label:
+        text: f"RAM-Nutzung: {root.mem_use:.1f}%"
+        font_size: '18sp'
+        halign: 'center'
+        valign: 'middle'
+    Label:
+        text: f"SD-Karten-Nutzung: {root.sd_use:.1f}%"
         font_size: '18sp'
         halign: 'center'
         valign: 'middle'
