@@ -62,7 +62,11 @@ class MQTTClient:
                 data = json.loads(payload)
             except json.JSONDecodeError:
                 # Kein JSON → behandle als einfacher String oder Zahl
-                data = payload
+                try:
+                    # Versuche float zu casten
+                    data = float(payload)
+                except ValueError:
+                    data = payload  # Fallback: bleibt String
 
             try:
 
@@ -75,7 +79,7 @@ class MQTTClient:
                 else:
                     # Kein Dict → direkter Wert (z. B. float, int, "ON", "OFF")
                     value = data
-
+                
                 # Callback aufrufen
                 self.name_to_callback[name](name, value)
 
