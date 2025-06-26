@@ -7,6 +7,16 @@ from kivy.lang import Builder
 # from kivy.clock import Clock
 from gui.main import MainScreen
 
+# sudo raspi-config
+# Display Options -> Resolution -> DMT Mode 87 1024x600 60Hz
+Config.set("graphics", "width", "1024")
+Config.set("graphics", "height", "600")
+Config.set("graphics", "resizable", "0")
+Config.set("graphics", "borderless", "1")
+# Uncomment on final setup
+# Config.set("graphics", "show_cursor", "0")    # Mauszeiger ausblenden
+# Config.set('graphics', 'fullscreen', 'auto')  # oder '1'
+
 
 class PoolControlApp(App):
     def build(self):
