@@ -1,16 +1,10 @@
 from utils.logger import logger
 from utils.config import config
-
-# from kivy.config import Config
-# Config.set('graphics', 'fullscreen', 'auto')
-
+from kivy.app import App
+from kivy.config import Config
 from kivy.lang import Builder
 
-Builder.load_file("gui/main.kv")
-
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.clock import Clock
+# from kivy.clock import Clock
 from gui.main import MainScreen
 
 
@@ -19,9 +13,11 @@ class PoolControlApp(App):
         logger.info("Application started.")
         self.title = "Pool Control"
         self.icon = "gui/icons/pool.png"
-        self.root = MainScreen()
-        Clock.schedule_interval(self.root.update_time, 1)
-        return self.root
+        Builder.load_file("gui/main.kv")
+        # self.root = MainScreen()
+        # Clock.schedule_interval(self.root.update_time, 1)
+        # return self.root
+        return MainScreen()
 
     def on_stop(self):
         logger.info("Application stopped.")
@@ -33,7 +29,6 @@ if __name__ == "__main__":
     logger.info(f"Pool Liter: {config.get('Pool', 'liter')}")
     logger.info(f"PH-Sollwert: {config.get('PH', 'sollwert')}")
     PoolControlApp().run()
-
 
 # from sensors.mcp23017_io import MCP23017IO, InputName, OutputName
 #
