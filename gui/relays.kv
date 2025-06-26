@@ -1,0 +1,138 @@
+<RelaysView>:
+    orientation: 'vertical'
+    size_hint_x: None
+    width: '120dp'
+    padding: '10dp'
+    spacing: '20dp'
+    canvas.before:
+        Color:
+            rgba: 0.9, 0.9, 0.9, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+    #    height: self.minimum_height
+        height: '70dp'
+    #    spacing: '35dp'
+        Label:
+            text: "Pumpe"
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            #valign: 'middle'
+        Switch:
+            id: pumpe_switch
+            active: root.pumpe_state
+            on_active: root.toggle_relay('pumpe', self.active)
+        Label:
+            text: root.pumpe_power
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+    #    height: self.minimum_height
+        height: '70dp'
+        Label:
+            text: "UV"
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+        Switch:
+            id: uv_switch
+            active: root.uv_state
+            on_active: root.toggle_relay('uv', self.active)
+        Label:
+            text: root.uv_power
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+    #    height: self.minimum_height
+        height: '70dp'
+        Label:
+            text: "Elektrolyse"
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+        Switch:
+            id: elektrolyse_switch
+            active: root.elektrolyse_state
+            on_active: root.toggle_relay('elektrolyse', self.active)
+        Label:
+            text: root.elektrolyse_power
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+    #    height: self.minimum_height
+        height: '70dp'
+        Label:
+            text: "Wärmepumpe"
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+        Switch:
+            id: wp_switch
+            active: root.wp_state
+            on_active: root.toggle_relay('wp', self.active)
+        Label:
+            text: root.wp_power
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+    #    height: self.minimum_height
+        height: '48dp'
+        Label:
+            text: "Pool Licht"
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+        Switch:
+            id: licht_switch
+            active: root.licht_state
+            on_active: root.toggle_relay('licht', self.active)
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+    #    height: self.minimum_height
+        height: '48dp'
+        Label:
+            text: "Haus Licht"
+            font_size: '14sp'
+            color: 0,0,0,1
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
+        Switch:
+            id: hlicht_switch
+            active: root.hlicht_state
+            on_active: root.toggle_relay('hlicht', self.active)
