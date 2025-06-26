@@ -12,7 +12,7 @@ class InfoPage(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.cpu_temp = read_cpu_temperature()
+        self.cpu_temp = str(read_cpu_temperature())
 
         # alle 10 Sekunden aktualisieren
         Clock.schedule_interval(self.update, 10)
