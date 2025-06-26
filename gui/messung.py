@@ -1,4 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
+from utils.config import config
 from kivy.lang import Builder
 from kivy.properties import StringProperty, BooleanProperty
 

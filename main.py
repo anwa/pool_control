@@ -1,4 +1,5 @@
 from utils.logger import logger
+from utils.config import config
 
 # from kivy.config import Config
 # Config.set('graphics', 'fullscreen', 'auto')
@@ -27,6 +28,10 @@ class PoolControlApp(App):
 
 
 if __name__ == "__main__":
+    logger.info("Starte Pool Control mit folgender Konfiguration:")
+    logger.info(f"MQTT-Server: {config.get('MQTT', 'ip')}:{config.get('MQTT', 'port')}")
+    logger.info(f"Pool Liter: {config.get('Pool', 'liter')}")
+    logger.info(f"PH-Sollwert: {config.get('PH', 'sollwert')}")
     PoolControlApp().run()
 
 

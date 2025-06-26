@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 from utils.logger import logger
+from utils.config import config
 
 
 class MQTTClient:
