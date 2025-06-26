@@ -55,7 +55,7 @@ class MQTTClient:
         topic = msg.topic
         payload = msg.payload.decode()
         name = self.topic_to_name.get(topic)
-        logger.info(f"topic: {topic}; payload: {payload}; name: {name}")
+        logger.debug(f"topic: {topic}; payload: {payload}; name: {name}")
         if name and name in self.name_to_callback:
             try:
                 # Versuche JSON zu parsen
