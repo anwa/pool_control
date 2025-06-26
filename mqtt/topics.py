@@ -5,7 +5,7 @@ cmnd_topics = {
     "salz": "GTN/Pool/Salz/cmnd/Power1",
     "wp": "GTN/Pool/WP/cmnd/Power1",
     "licht": "GTN/Pool/Licht/cmnd/Power1",
-    "haus_licht": "GTN/Pool/Haus-Licht/cmnd/Power1",
+    "hlicht": "GTN/Pool/Haus-Licht/cmnd/Power1",
 }
 
 relay_topics = {
