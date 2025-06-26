@@ -36,8 +36,8 @@ class MQTTClient:
         # Mapping: name -> callback-Funktion
         self.name_to_callback = {}
         # Verbindung herstellen und Loop starten
-        # self.client.connect(broker, port, 60)
-        # self.client.loop_start()
+        self.client.connect(broker, port, 60)
+        self.client.loop_start()
 
     def on_connect(self, client, userdata, flags, rc):
         """
