@@ -45,9 +45,6 @@ class MQTTClient:
         """
         if rc == 0:
             logger.info("MQTT: Verbindung erfolgreich!")
-            for topic in cmnd_topics.values():
-                # Leeres Payload fragt den Status ab (Tasmota-Logik)
-                self.mqtt_client.publish(topic, payload="", qos=1, retain=False)
         else:
             logger.info(f"MQTT: Verbindungsfehler, Code {rc}")
 
@@ -85,13 +82,13 @@ class MQTTClient:
             self.name_to_callback[name] = callback
             self.client.subscribe(topic)
 
-    def publish(self, topic, payload):
+    def publish(self, topic, payload, qos=0, retain=False):
         """
         Sendet eine Nachricht an das angegebene Topic.
         :param topic: Topic-String
         :param payload: String oder serialisiertes JSON
         """
-        self.client.publish(topic, payload)
+        self.client.publish(topic, payload, qos, retain)
 
 
 # Singleton-Instanz für die gesamte Anwendung
