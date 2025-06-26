@@ -21,7 +21,7 @@ class GZipTimedRotatingFileHandler(TimedRotatingFileHandler):
                     os.remove(full_path)
 
 log_dir = config.get('Log', 'dir', fallback='./logs')
-retention_days = config.getint('Log', 'retention_days', fallback=7)
+retention_days = int(config.get('Log', 'retention_days', fallback=7))
 log_level_str = config.get('Log', 'level', fallback='INFO').upper()
 log_level = getattr(logging, log_level_str, logging.INFO)
 
