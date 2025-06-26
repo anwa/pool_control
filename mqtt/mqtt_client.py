@@ -57,16 +57,29 @@ class MQTTClient:
         name = self.topic_to_name.get(topic)
         logger.info(f"topic: {topic}; payload: {payload}; name: {name}")
         if name and name in self.name_to_callback:
-            # Versuche, das JSON zu parsen
             try:
+                # Versuche JSON zu parsen
                 data = json.loads(payload)
-                # Beispiel: Extrahiere "Power" aus "ENERGY" für das Pumpen-Topic
-                if "ENERGY" in data and "Power" in data["ENERGY"]:
-                    value = data["ENERGY"]["Power"]
+            except json.JSONDecodeError:
+                # Kein JSON → behandle als einfacher String oder Zahl
+                data = payload
+
+            try:
+
+                if isinstance(data, dict):
+                    # Beispiel: Extrahiere "Power" aus "ENERGY" für spezielle Topics
+                    if "ENERGY" in data and "Power" in data["ENERGY"]:
+                        value = data["ENERGY"]["Power"]
+                    else:
+                        value = data  # Ganzes Dict zurückgeben
                 else:
-                    value = data  # Fallback: ganzes JSON
-                # Callback aufrufen: (name, value)
+                    # Kein Dict → direkter Wert (z. B. float, int, "ON", "OFF")
+                    value = data
+
+                # Callback aufrufen
                 self.name_to_callback[name](name, value)
+
+
             except Exception as e:
                 logger.info(f"MQTT: Fehler beim Parsen von {topic}: {e}")
 
