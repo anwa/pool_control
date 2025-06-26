@@ -26,6 +26,8 @@ class RelaysView(BoxLayout):
         super().__init__(**kwargs)
         # MQTT-Subscribe
         mqtt_client.subscribe_dict(relay_topics, self.on_mqtt_value)
+        for topic in cmnd_topics.values():
+            mqtt_client.publish(topic, payload="", qos=1, retain=False)
 
     def on_mqtt_value(self, name, value):
         Clock.schedule_once(lambda dt: self._update_value(name, value))
