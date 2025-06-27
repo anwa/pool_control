@@ -42,5 +42,5 @@ class MessungPage(BoxLayout):
         if name == "wp_target_temp":
             self.wp_target_temp = f"{value:.0f}"
         if name == "pool_temp":
-            self.pool_temp = f"{value:.1f}"
+            self.pool_temp = value
             
