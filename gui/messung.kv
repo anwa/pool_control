@@ -22,15 +22,77 @@
             text_size: self.size
             halign: 'left'
         Label:
-            text: "Pool-Temperatur:"
+            text: "Pool:"
             font_size: '18sp'
             text_size: self.size
             halign: 'right'
+            valign: 'middle'
         Label:
-            text: root.pool_temp
+            text: f"{root.pool_temp:.1f} °C"
             font_size: '18sp'
             text_size: self.size
             halign: 'left'
+            valign: 'middle'
+        Label:
+            text: "Poolhaus IN:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: f"{root.poolhaus_in_temp:.1f} °C"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+        Label:
+            text: "Poolhaus OUT:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: f"{root.poolhaus_out_temp:.1f} °C"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+        Label:
+            text: "Wärmepumpe OUT:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: f"{root.waermepumpe_out_temp:.1f} °C"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+        Label:
+            text: "Poolhaus:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: f"{root.poolhaus_temp:.1f} °C"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
+        Label:
+            text: "Wärmepumpe:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+            valign: 'middle'
+        Label:
+            text: f"{root.wp_current_temp} °C / {root.wp_target_temp} °C"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+            valign: 'middle'
         Label:
             text: "TDS:"
             font_size: '18sp'
@@ -61,30 +123,6 @@
             valign: 'middle'
         Label:
             text: f"{root.pool_energy_today} / {root.pool_energy_yesterday}"
-            font_size: '18sp'
-            text_size: self.size
-            halign: 'left'
-            valign: 'middle'
-        Label:
-            text: "Wärmepumpe:"
-            font_size: '18sp'
-            text_size: self.size
-            halign: 'right'
-            valign: 'middle'
-        Label:
-            text: f"{root.wp_current_temp} °C / {root.wp_target_temp} °C"
-            font_size: '18sp'
-            text_size: self.size
-            halign: 'left'
-            valign: 'middle'
-        Label:
-            text: "Pool:"
-            font_size: '18sp'
-            text_size: self.size
-            halign: 'right'
-            valign: 'middle'
-        Label:
-            text: f"{root.pool_temp:.1f} °C"
             font_size: '18sp'
             text_size: self.size
             halign: 'left'

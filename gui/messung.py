@@ -14,14 +14,19 @@ Builder.load_file("gui/messung.kv")
 class MessungPage(BoxLayout):
     # Properties für Messwerte
     ph_value = StringProperty("7.2")
-    pool_temp = StringProperty("24.5 °C")
+
+    pool_temp   = NumericProperty(0.0)
+    poolhaus_in_temp   = NumericProperty(0.0)
+    waermepumpe_out_temp   = NumericProperty(0.0)
+    poolhaus_out_temp   = NumericProperty(0.0)
+    poolhaus_temp   = NumericProperty(0.0)
+    wp_current_temp = NumericProperty(0.0)
+
     tds_value = StringProperty("800 ppm")
     pool_power = StringProperty("2975 W")
     pool_energy_today = StringProperty("11.30 kWh")
     pool_energy_yesterday = StringProperty("21.65 kWh")
-    wp_current_temp = StringProperty("0")
     wp_target_temp = StringProperty("0")
-    pool_temp   = NumericProperty(0.0)
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -37,10 +42,18 @@ class MessungPage(BoxLayout):
         Clock.schedule_once(lambda dt: self._update_value(name, value))
 
     def _update_value(self, name, value):
-        if name == "wp_current_temp":
-            self.wp_current_temp = f"{value:.0f}"
         if name == "wp_target_temp":
             self.wp_target_temp = f"{value:.0f}"
         if name == "pool_temp":
             self.pool_temp = value
+        if name == "poolhaus_in_temp":
+            self.poolhaus_in_temp = value
+        if name == "waermepumpe_out_temp":
+            self.waermepumpe_out_temp = value
+        if name == "poolhaus_out_temp":
+            self.poolhaus_out_temp = value
+        if name == "poolhaus_temp":
+            self.poolhaus_temp = value
+        if name == "wp_current_temp":
+            self.wp_current_temp = value
             
