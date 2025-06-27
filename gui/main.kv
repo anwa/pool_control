@@ -37,8 +37,9 @@
         BoxLayout:
             id: sidebar
             orientation: 'vertical'
-            size_hint_x: None
+            height: '484dp'
             width: '120dp'
+            size_hint_x: None
             spacing: '10dp'
             padding: '10dp'
             canvas.before:
@@ -64,17 +65,21 @@
         BoxLayout:
             id: center_area
             orientation: 'vertical'
-            padding: '30dp'
-            spacing: '50dp'
+            height: '484dp'
+            width: '784dp'
+            size_hint_x: None
+            padding: '20dp'
+            spacing: '10dp'
 
         # Rechter Bereich für Relais (dynamisch)
         BoxLayout:
             id: right_area
             orientation: 'vertical'
             size_hint_x: None
+            height: '484dp'
             width: '120dp'
-            #padding: '10dp'
-            #spacing: '20dp'
+            #padding: '5dp'
+            #spacing: '5dp'
             # Wird dynamisch befüllt
 
     # Fußbereich
