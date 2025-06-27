@@ -1,3 +1,8 @@
+# import kivy module
+import kivy
+
+kivy.require("2.3.1")
+
 from utils.logger import logger
 from utils.config import config
 from kivy.app import App
