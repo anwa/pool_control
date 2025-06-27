@@ -3,7 +3,7 @@ from utils.config import config
 from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import StringProperty  # , BooleanProperty
+from kivy.properties import StringProperty, NumericProperty  # , BooleanProperty
 
 from mqtt.mqtt_client import mqtt_client
 from mqtt.topics import mess_topics
@@ -21,7 +21,8 @@ class MessungPage(BoxLayout):
     pool_energy_yesterday = StringProperty("21.65 kWh")
     wp_current_temp = StringProperty("0")
     wp_target_temp = StringProperty("0")
-
+    pool_temp   = NumericProperty(0.0)
+    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Konfigurationswerte setzen
@@ -40,3 +41,6 @@ class MessungPage(BoxLayout):
             self.wp_current_temp = f"{value:.0f}"
         if name == "wp_target_temp":
             self.wp_target_temp = f"{value:.0f}"
+        if name == "pool_temp":
+            self.pool_temp = f"{value:.1f}"
+            

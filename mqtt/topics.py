@@ -22,6 +22,11 @@ relay_topics = {
 }
 
 mess_topics = {
-    "wp_target_temp": "GTN/Pool/Controller/stat/target_temp",
-    "wp_current_temp": "GTN/Pool/Controller/tele/current_temp",
+    "pool_temp":            "GTN/Pool/Controller/tele/sensor.gtn_pool_control_pool_temperatur",
+    "poolhaus_in_temp":     "GTN/Pool/Controller/tele/sensor.gtn_pool_control_poolhaus_in_temperatur",
+    "waermepumpe_out_temp": "GTN/Pool/Controller/tele/sensor.gtn_pool_control_waermepumpe_out_temperatur",
+    "poolhaus_out_temp":    "GTN/Pool/Controller/tele/sensor.gtn_pool_control_poolhaus_out_temperatur",
+    "poolhaus_temp":        "GTN/Pool/Controller/tele/sensor.gtn_pool_control_poolhaus_temperatur",
+    "wp_current_temp":      "GTN/Pool/Controller/tele/sensor.pool_wp_current_temp",
+    "wp_target_temp":       "GTN/Pool/Controller/stat/target_temp",
 }
