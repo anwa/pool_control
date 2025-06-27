@@ -21,12 +21,12 @@ class MessungPage(BoxLayout):
     poolhaus_out_temp   = NumericProperty(0.0)
     poolhaus_temp   = NumericProperty(0.0)
     wp_current_temp = NumericProperty(0.0)
+    wp_target_temp = NumericProperty(0.0)
 
     tds_value = StringProperty("800 ppm")
     pool_power = StringProperty("2975 W")
     pool_energy_today = StringProperty("11.30 kWh")
     pool_energy_yesterday = StringProperty("21.65 kWh")
-    wp_target_temp = StringProperty("0")
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -43,7 +43,7 @@ class MessungPage(BoxLayout):
 
     def _update_value(self, name, value):
         if name == "wp_target_temp":
-            self.wp_target_temp = f"{value:.0f}"
+            self.wp_target_temp = value
         if name == "pool_temp":
             self.pool_temp = value
         if name == "poolhaus_in_temp":
