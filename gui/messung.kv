@@ -17,7 +17,7 @@
             text_size: self.size
             halign: 'right'
         Label:
-            text: root.ph_value
+            text: f"{root.ph_value}"
             font_size: '18sp'
             text_size: self.size
             halign: 'left'
@@ -94,12 +94,32 @@
             halign: 'left'
             valign: 'middle'
         Label:
+            text: "Aussen:"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+        Label:
+            text: f"{root.out_temp:.1f} °C / {root.out_hum:.1f} % RelH / {root.out_press:.1f} hPa"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+        Label:
             text: "TDS:"
             font_size: '18sp'
             text_size: self.size
             halign: 'right'
         Label:
-            text: root.tds_value
+            text: f"{root.tds_value} ppm"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'left'
+        Label:
+            text: "Druck (IN/OUT/DIFF):"
+            font_size: '18sp'
+            text_size: self.size
+            halign: 'right'
+        Label:
+            text: f"{root.p_in:.1f} mBar / {root.p_out:.1f} mBar / {root.p_diff:.1f} mBar"
             font_size: '18sp'
             text_size: self.size
             halign: 'left'
@@ -110,7 +130,7 @@
             halign: 'right'
             valign: 'middle'
         Label:
-            text: root.pool_power
+            text: f"{root.power:.1f} W"
             font_size: '18sp'
             text_size: self.size
             halign: 'left'
@@ -122,7 +142,7 @@
             halign: 'right'
             valign: 'middle'
         Label:
-            text: f"{root.pool_energy_today} / {root.pool_energy_yesterday}"
+            text: f"{root.energy_today:.2f} Wh / {root.energy_yesterday:.2f} Wh"
             font_size: '18sp'
             text_size: self.size
             halign: 'left'
