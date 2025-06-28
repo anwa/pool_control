@@ -16,20 +16,19 @@
         size_hint_y: None
     #    height: self.minimum_height
         height: '70dp'
-    #    spacing: '35dp'
         Label:
             text: "Pumpe"
             font_size: '14sp'
             color: 0,0,0,1
             text_size: self.size
             halign: 'center'
-            #valign: 'middle'
+            valign: 'middle'
         Switch:
             id: pumpe_switch
             active: root.pumpe_state
             on_active: root.toggle_relay('pumpe', self.active)
         Label:
-            text: root.pumpe_power
+            text: f"{root.pumpe_power:.0f} W"
             font_size: '14sp'
             color: 0,0,0,1
             text_size: self.size
@@ -52,7 +51,7 @@
             active: root.uv_state
             on_active: root.toggle_relay('uv', self.active)
         Label:
-            text: root.uv_power
+            text: f"{root.uv_power:.0f} W"
             font_size: '14sp'
             color: 0,0,0,1
             text_size: self.size
@@ -75,7 +74,7 @@
             active: root.elektrolyse_state
             on_active: root.toggle_relay('elektrolyse', self.active)
         Label:
-            text: root.elektrolyse_power
+            text: f"{root.elektrolyse_power:.0f} W"
             font_size: '14sp'
             color: 0,0,0,1
             text_size: self.size
@@ -98,7 +97,7 @@
             active: root.wp_state
             on_active: root.toggle_relay('wp', self.active)
         Label:
-            text: root.wp_power
+            text: f"{root.wp_power:.0f} W"
             font_size: '14sp'
             color: 0,0,0,1
             text_size: self.size

@@ -1,6 +1,6 @@
 from utils.logger import logger
 from kivy.uix.boxlayout import BoxLayout
-from kivy.properties import StringProperty, BooleanProperty
+from kivy.properties import StringProperty, BooleanProperty, NumericProperty
 from kivy.clock import Clock
 from kivy.lang import Builder
 from mqtt.mqtt_client import mqtt_client
@@ -12,13 +12,13 @@ Builder.load_file("gui/relays.kv")
 class RelaysView(BoxLayout):
     # Properties für Relais-Schalter
     pumpe_state = BooleanProperty(False)
-    pumpe_power = StringProperty("450 W")
+    pumpe_power = NumericProperty(0.0)
     uv_state = BooleanProperty(False)
-    uv_power = StringProperty("75 W")
+    uv_power = NumericProperty(0.0)
     elektrolyse_state = BooleanProperty(False)
-    elektrolyse_power = StringProperty("100 W")
+    elektrolyse_power = NumericProperty(0.0)
     wp_state = BooleanProperty(False)
-    wp_power = StringProperty("2350 W")
+    wp_power = NumericProperty(0.0)
     licht_state = BooleanProperty(False)
     hlicht_state = BooleanProperty(False)
 
@@ -38,7 +38,7 @@ class RelaysView(BoxLayout):
         elif value == "OFF":
             setattr(self, name, False)
         else:
-            setattr(self, name, str(value))
+            setattr(self, name, value)
 
     def toggle_relay(self, relay_name, state):
         cmd = "ON" if state else "OFF"
