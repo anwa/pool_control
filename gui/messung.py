@@ -7,6 +7,7 @@ from kivy.properties import StringProperty, NumericProperty  # , BooleanProperty
 
 from mqtt.mqtt_client import mqtt_client
 from mqtt.topics import mess_topics
+from sensors.one_wire import OneWireReader
 
 Builder.load_file("gui/messung.kv")
 
@@ -16,6 +17,7 @@ class MessungPage(BoxLayout):
     ph_value = NumericProperty(7.2)
 
     pool_temp   = NumericProperty(0.0)
+    pool_temp2   = NumericProperty(0.0)
     poolhaus_in_temp   = NumericProperty(0.0)
     waermepumpe_out_temp   = NumericProperty(0.0)
     poolhaus_out_temp   = NumericProperty(0.0)
@@ -42,8 +44,13 @@ class MessungPage(BoxLayout):
         self.ph_sollwert = config.get("PH", "sollwert", fallback="unbekannt")
         self.ph_liquid = config.get("PH", "liquid", fallback="unbekannt")
         self.ph_konzentration = config.get("PH", "konzentration", fallback="unbekannt")
+        # 1-Wire Sensoren einrichten
+        self.reader = OneWireReader()
         # MQTT-Subscribe
         mqtt_client.subscribe_dict(mess_topics, self.on_mqtt_value)
+        # Timer für 1-Wire Sensor lesen (alle 5 Sekunden)
+        Clock.schedule_interval(self.read_temperatures, 5)
+
 
     def on_mqtt_value(self, name, value):
         Clock.schedule_once(lambda dt: self._update_value(name, value))
@@ -52,3 +59,11 @@ class MessungPage(BoxLayout):
         setattr(self, name, value)
         if name == "p_in" or name == "p_out":
             self.p_diff = self.p_out - self.p_in
+
+    def read_temperatures(self):
+        values = self.reader.read_all()
+
+        self.pool_temp2 = values.get("Pool")
+        #self.poolhaus_in_temp = values.get("PH_IN")
+        #self.poolhaus_out_temp = values.get("PH_OUT")
+        #self.waermepumpe_out_temp = values.get("WP_OUT")
