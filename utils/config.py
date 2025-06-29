@@ -80,18 +80,6 @@ class Config:
             print(f"Fehler beim Laden ignorierter Sensoren: {e}")
             return set()
 
-    def get_ignored_sensors(self) -> set[str]:
-        """
-        Liest die ignorierten Sensoren aus dem Abschnitt [1-Wire], Schlüssel 'ignored'.
-        Gibt eine Menge von Sensor-IDs zurück.
-        """
-        try:
-            ignored_str = self.get("1-Wire", "ignored", fallback="")
-            return set(s.strip() for s in ignored_str.split(",") if s.strip())
-        except Exception as e:
-            print(f"Fehler beim Lesen ignorierter Sensoren: {e}")
-            return set()
-
     def remove_ignored_sensor(self, sensor_id):
         if self.config.has_option("1-Wire-Ignore", sensor_id):
             self.config.remove_option("1-Wire-Ignore", sensor_id)
