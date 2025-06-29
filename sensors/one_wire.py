@@ -4,9 +4,13 @@ from utils.config import config
 from w1thermsensor import W1ThermSensor, SensorNotReadyError
 
 IGNORED_FILE = "ignored_sensors.txt"
-class OneWireSensors:
+
+class OneWireReader:
     def __init__(self):
-        self.sensors = W1ThermSensor.get_available_sensors()
+        self.id_to_name = config.get_onewire_mapping()
+        self.ignored = self.load_ignored()
+        self.available_sensors = {s.id: s for s in W1ThermSensor.get_available_sensors()}
+        # self.sensors = W1ThermSensor.get_available_sensors()
 
     def load_ignored(self):
         if os.path.exists(IGNORED_FILE):
