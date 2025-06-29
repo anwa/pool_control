@@ -6,7 +6,7 @@ from w1thermsensor import W1ThermSensor, SensorNotReadyError
 class OneWireReader:
     def __init__(self):
         self.id_to_name = config.get_onewire_mapping()
-        self.ignored = self.load_ignored()
+        self.ignored = config.load_ignored()
         self.available_sensors = {s.id: s for s in W1ThermSensor.get_available_sensors()}
 
         # Entferne gefundene Sensoren aus ignore-Liste
@@ -14,10 +14,10 @@ class OneWireReader:
         if found_and_ignored:
             print(f"found_and_ignored: {found_and_ignored}")
             for sensor_id in found_and_ignored:
-                self.remove_ignored_sensor(sensor_id)
-            #self.ignored -= found_and_ignored
-            #config.set_ignored_sensors(self.ignored)
+                config.remove_ignored_sensor(sensor_id)
+                self.ignored.discard(sensor_id)
 
+    """
     def load_ignored(self):
         try:
             if not config.config.has_section("1-Wire-Ignore"):
@@ -26,17 +26,7 @@ class OneWireReader:
         except Exception as e:
             print(f"Fehler beim Laden ignorierter Sensoren: {e}")
             return set()
-
-    def save_ignored(self):
-        try:
-            if not config.config.has_section("1-Wire-Ignore"):
-                config.config.add_section("1-Wire-Ignore")
-            existing = set(config.config.options("1-Wire-Ignore"))
-            for sensor_id in self.ignored:
-                if sensor_id not in existing:
-                    config.set("1-Wire-Ignore", sensor_id, "1")
-        except Exception as e:
-            print(f"Fehler beim Speichern ignorierter Sensoren: {e}")
+    """
 
     def remove_ignored_sensor(self, sensor_id):
         if config.config.has_option("1-Wire-Ignore", sensor_id):
@@ -53,9 +43,14 @@ class OneWireReader:
         return missing
 
     def ignore_sensor(self, sensor_id):
-        self.ignored.add(sensor_id)
-        self.save_ignored()
+        try:
+            if sensor_id not in self.ignored:
+                self.ignored.add(sensor_id)
+                config.ignore_sensor_permanently(sensor_id)
+        except Exception as e:
+            print(f"Fehler beim Speichern ignorierter Sensoren: {e}")
 
+    """ 
     def read_all(self):
         results = {}
         for sensor_id, name in self.id_to_name.items():
@@ -71,3 +66,4 @@ class OneWireReader:
             except SensorNotReadyError:
                 results[name] = None
         return results
+    """

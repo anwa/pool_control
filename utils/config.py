@@ -56,14 +56,29 @@ class Config:
             return None
 
     def ignore_sensor_permanently(self, sensor_id: str):
-        if not self.config.has_section("1-Wire-Ignore"):
-            self.config.add_section("1-Wire-Ignore")
-        self.config.set("1-Wire-Ignore", sensor_id, "true")
-        with open("config.ini", "w") as configfile:
-            self.config.write(configfile)
+        """
+        Speichert die ignorierten Sensoren als kommaseparierte Liste in config.ini.
+        """
+        try:
+            if not self.config.has_section("1-Wire-Ignore"):
+                self.config.add_section("1-Wire-Ignore")
+            self.config.set("1-Wire-Ignore", sensor_id, "true")
+            with open("config.ini", "w") as configfile:
+                self.config.write(configfile)
+        except Exception as e:
+            print(f"Fehler beim Speichern ignorierter Sensoren: {e}")
 
     def is_sensor_ignored(self, sensor_id: str) -> bool:
         return self.config.getboolean("1-Wire-Ignore", sensor_id, fallback=False)
+
+    def load_ignored(self):
+        try:
+            if not self.config.has_section("1-Wire-Ignore"):
+                return set()
+            return set(config.config.options("1-Wire-Ignore"))
+        except Exception as e:
+            print(f"Fehler beim Laden ignorierter Sensoren: {e}")
+            return set()
 
     def get_ignored_sensors(self) -> set[str]:
         """
@@ -77,17 +92,12 @@ class Config:
             print(f"Fehler beim Lesen ignorierter Sensoren: {e}")
             return set()
 
-    def set_ignored_sensors(self, sensor_ids: set[str]):
-        """
-        Speichert die ignorierten Sensoren als kommaseparierte Liste in config.ini.
-        """
-        try:
-            ignored_str = ", ".join(sorted(sensor_ids))
-            if not self.config.has_section("1-Wire"):
-                self.config.add_section("1-Wire")
-            self.set("1-Wire", "ignored", ignored_str)
-        except Exception as e:
-            print(f"Fehler beim Speichern ignorierter Sensoren: {e}")
+    def remove_ignored_sensor(self, sensor_id):
+        if self.config.has_option("1-Wire-Ignore", sensor_id):
+            self.config.remove_option("1-Wire-Ignore", sensor_id)
+            with open("config.ini", "w") as configfile:
+                config.config.write(configfile)
+        #self.ignored.discard(sensor_id)
 
     def delete_sensor(self, sensor_id: str):
         if self.config.has_option("1-Wire", sensor_id):
