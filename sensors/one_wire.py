@@ -6,30 +6,44 @@ from w1thermsensor import W1ThermSensor, SensorNotReadyError
 class OneWireReader:
     def __init__(self):
         self.id_to_name = config.get_onewire_mapping()
-        self.ignored = config.get_ignored_sensors()
+        self.ignored = self.load_ignored()
         self.available_sensors = {s.id: s for s in W1ThermSensor.get_available_sensors()}
 
         # Entferne gefundene Sensoren aus ignore-Liste
         found_and_ignored = set(self.ignored) & set(self.available_sensors.keys())
         if found_and_ignored:
             print(f"found_and_ignored: {found_and_ignored}")
-            self.ignored -= found_and_ignored
-            config.set_ignored_sensors(self.ignored)
+            for sensor_id in found_and_ignored:
+                self.remove_ignored_sensor(sensor_id)
+            #self.ignored -= found_and_ignored
+            #config.set_ignored_sensors(self.ignored)
 
     def load_ignored(self):
         try:
-            ignored_str = config.get("1-Wire", "ignored", fallback="")
-            return set(s.strip() for s in ignored_str.split(",") if s.strip())
+            if not config.config.has_section("1-Wire-Ignore"):
+                return set()
+            return set(config.config.options("1-Wire-Ignore"))
         except Exception as e:
             print(f"Fehler beim Laden ignorierter Sensoren: {e}")
             return set()
 
     def save_ignored(self):
         try:
-            ignored_str = ", ".join(sorted(self.ignored))
-            config.set("1-Wire", "ignored", ignored_str)
+            if not config.config.has_section("1-Wire-Ignore"):
+                config.config.add_section("1-Wire-Ignore")
+            existing = set(config.config.options("1-Wire-Ignore"))
+            for sensor_id in self.ignored:
+                if sensor_id not in existing:
+                    config.set("1-Wire-Ignore", sensor_id, "1")
         except Exception as e:
             print(f"Fehler beim Speichern ignorierter Sensoren: {e}")
+
+    def remove_ignored_sensor(self, sensor_id):
+        if config.config.has_option("1-Wire-Ignore", sensor_id):
+            config.config.remove_option("1-Wire-Ignore", sensor_id)
+            with open("config.ini", "w") as configfile:
+                config.config.write(configfile)
+        self.ignored.discard(sensor_id)
 
     def get_missing_sensors(self):
         missing = []

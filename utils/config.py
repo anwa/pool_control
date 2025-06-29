@@ -55,15 +55,15 @@ class Config:
             print(f"Fehler beim Auflösen des Namens '{name}': {e}")
             return None
 
-#    def ignore_sensor_permanently(self, sensor_id: str):
-#        if not self.config.has_section("1-Wire-Ignore"):
-#            self.config.add_section("1-Wire-Ignore")
-#        self.config.set("1-Wire-Ignore", sensor_id, "true")
-#        with open("config.ini", "w") as configfile:
-#            self.config.write(configfile)
-#
-#    def is_sensor_ignored(self, sensor_id: str) -> bool:
-#        return self.config.getboolean("1-Wire-Ignore", sensor_id, fallback=False)
+    def ignore_sensor_permanently(self, sensor_id: str):
+        if not self.config.has_section("1-Wire-Ignore"):
+            self.config.add_section("1-Wire-Ignore")
+        self.config.set("1-Wire-Ignore", sensor_id, "true")
+        with open("config.ini", "w") as configfile:
+            self.config.write(configfile)
+
+    def is_sensor_ignored(self, sensor_id: str) -> bool:
+        return self.config.getboolean("1-Wire-Ignore", sensor_id, fallback=False)
 
     def get_ignored_sensors(self) -> set[str]:
         """
