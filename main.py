@@ -4,12 +4,14 @@ import kivy
 kivy.require("2.3.1")
 
 from utils.logger import logger
+from sensors.one_wire import OneWireReader
 from utils.config import config
 from kivy.app import App
 from kivy.config import Config
 from kivy.lang import Builder
 
 # from kivy.clock import Clock
+from gui.missing_sensor_popup import MissingSensorPopup
 from gui.main import MainScreen
 
 # sudo raspi-config
@@ -25,7 +27,6 @@ Config.set("graphics", "borderless", "1")
 
 class PoolControlApp(App):
     def build(self):
-        logger.info("Application started.")
         self.title = "Pool Control"
         self.icon = "gui/icons/pool.png"
         Builder.load_file("gui/main.kv")
@@ -33,6 +34,35 @@ class PoolControlApp(App):
         # Clock.schedule_interval(self.root.update_time, 1)
         # return self.root
         return MainScreen()
+
+    def on_start(self):
+        logger.info("Application started.")
+        self.reader = OneWireReader()
+        self.missing_sensors = self.reader.get_missing_sensors()
+        self._show_next_missing_sensor()
+
+    def _show_next_missing_sensor(self):
+        if not self.missing_sensors:
+            return  # alle Sensoren verarbeitet
+
+        sensor_id = self.missing_sensors.pop(0)
+        sensor_name = config.get_onewire_mapping().get(sensor_id, sensor_id)
+
+        popup = MissingSensorPopup(
+            sensor_name=sensor_name,
+            sensor_id=sensor_id,
+            callback=self._handle_sensor_decision
+        )
+        popup.open()
+
+    def _handle_sensor_decision(self, sensor_id, action):
+        if action == "delete":
+            config.remove_option("1-Wire", sensor_id)
+        elif action == "ignore":
+            self.reader.ignore_sensor(sensor_id)
+        # "keep" → nichts tun
+
+        self._show_next_missing_sensor()  # nächsten Sensor anzeigen
 
     def on_stop(self):
         logger.info("Application stopped.")
@@ -43,6 +73,7 @@ if __name__ == "__main__":
     logger.info(f"MQTT-Server: {config.get('MQTT', 'ip')}:{config.get('MQTT', 'port')}")
     logger.info(f"Pool Liter: {config.get('Pool', 'liter')}")
     logger.info(f"PH-Sollwert: {config.get('PH', 'sollwert')}")
+    logger.info(f"1-Wire: {config.get_onewire_mapping()}")
     PoolControlApp().run()
 
 # from sensors.mcp23017_io import MCP23017IO, InputName, OutputName
