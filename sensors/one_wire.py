@@ -31,3 +31,8 @@ class OneWireReader:
                 config.ignore_sensor_permanently(sensor_id)
         except Exception as e:
             print(f"Fehler beim Speichern ignorierter Sensoren: {e}")
+
+    def assign_name(self, sensor_id, name):
+        config.set("1-Wire", sensor_id, name)
+        self.id_to_name[sensor_id] = name
+        print(f"id_to_name: {self.id_to_name}")

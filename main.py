@@ -12,6 +12,7 @@ from kivy.lang import Builder
 
 # from kivy.clock import Clock
 from gui.missing_sensor_popup import MissingSensorPopup
+from gui.new_sensor_popup import NewSensorPopup
 from gui.main import MainScreen
 
 # sudo raspi-config
@@ -40,7 +41,34 @@ class PoolControlApp(App):
         self.reader = OneWireReader()
         self.missing_sensors = self.reader.get_missing_sensors()
         self._show_next_missing_sensor()
+        self._show_next_new_sensor()
 
+    def _show_next_new_sensor(self):
+        if not self.new_sensors:
+            return
+
+        sensor_id, temp = self.new_sensors.pop(0)
+
+        # Mögliche Namen, die noch nicht vergeben sind
+        all_names = ["Pool", "PH_IN", "PH_OUT", "WP_OUT"]
+        used_names = set(self.reader.id_to_name.values())
+        available_names = [n for n in all_names if n not in used_names]
+
+        popup = NewSensorPopup(
+            sensor_id=sensor_id,
+            temperature=temp,
+            available_names=available_names,
+            assign_callback=self._handle_sensor_assignment
+        )
+        popup.open()
+
+    def _handle_sensor_assignment(self, sensor_id, name):
+        if name:
+            self.reader.assign_name(sensor_id, name)
+        else:
+            self.reader.ignore_sensor(sensor_id)
+        self._show_next_new_sensor()
+        
     def _show_next_missing_sensor(self):
         if not self.missing_sensors:
             return  # alle Sensoren verarbeitet
