@@ -12,10 +12,32 @@ class OneWireReader:
         # Entferne gefundene Sensoren aus ignore-Liste
         found_and_ignored = set(self.ignored) & set(self.available_sensors.keys())
         if found_and_ignored:
-            print(f"found_and_ignored: {found_and_ignored}")
             for sensor_id in found_and_ignored:
                 config.remove_ignored_sensor(sensor_id)
                 self.ignored.discard(sensor_id)
+
+        # Neue Sensoren: nicht bekannt & nicht ignoriert
+        known_ids = set(self.id_to_name.keys()) | self.ignored
+        self.new_sensors = [sid for sid in self.available_sensors if sid not in known_ids]
+
+    def read_all(self):
+        """
+        Liefert ein Dictionary mit allen benannten Sensoren und ihren aktuellen Temperaturen.
+        """
+        results = {}
+        for sensor_id, name in self.id_to_name.items():
+            if sensor_id in self.ignored:
+                continue
+            sensor = self.available_sensors.get(sensor_id)
+            if sensor is None:
+                results[name] = None
+                continue
+            try:
+                temp_c = round(sensor.get_temperature(), 2)
+                results[name] = temp_c
+            except SensorNotReadyError:
+                results[name] = None
+        return results
 
     def get_missing_sensors(self):
         missing = []
@@ -37,7 +59,16 @@ class OneWireReader:
         self.id_to_name[sensor_id] = name
         print(f"id_to_name: {self.id_to_name}")
 
+    def get_new_sensors(self):
+        """
+        Gibt eine Liste neuer Sensor-IDs zurück (noch nicht bekannt oder ignoriert).
+        """
+        return self.new_sensors
+
     def get_new_sensor_info(self):
+        """
+        Gibt eine Liste von Tupeln (sensor_id, temperatur) für neue Sensoren zurück.
+        """
         infos = []
         for sid in self.new_sensors:
             try:
