@@ -41,6 +41,10 @@ class PoolControlApp(App):
         self.reader = OneWireReader()
         self.missing_sensors = self.reader.get_missing_sensors()
         self._show_next_missing_sensor()
+        self._process_new_sensors()
+
+    def _process_new_sensors(self):
+        self.new_sensors = self.reader.get_new_sensor_info()
         self._show_next_new_sensor()
 
     def _show_next_new_sensor(self):

@@ -36,3 +36,14 @@ class OneWireReader:
         config.set("1-Wire", sensor_id, name)
         self.id_to_name[sensor_id] = name
         print(f"id_to_name: {self.id_to_name}")
+
+    def get_new_sensor_info(self):
+        infos = []
+        for sid in self.new_sensors:
+            try:
+                temp = round(self.available_sensors[sid].get_temperature(), 2)
+            except Exception:
+                temp = None
+            infos.append((sid, temp))
+        return infos
+    
