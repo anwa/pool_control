@@ -3,24 +3,33 @@ import os
 from utils.config import config
 from w1thermsensor import W1ThermSensor, SensorNotReadyError
 
-IGNORED_FILE = "ignored_sensors.txt"
-
 class OneWireReader:
     def __init__(self):
         self.id_to_name = config.get_onewire_mapping()
-        self.ignored = self.load_ignored()
+        self.ignored = config.get_ignored_sensors()
         self.available_sensors = {s.id: s for s in W1ThermSensor.get_available_sensors()}
-        # self.sensors = W1ThermSensor.get_available_sensors()
+
+        # Entferne gefundene Sensoren aus ignore-Liste
+        found_and_ignored = set(self.ignored) & set(self.available_sensors.keys())
+        if found_and_ignored:
+            print(f"found_and_ignored: {found_and_ignored}")
+            self.ignored -= found_and_ignored
+            config.set_ignored_sensors(self.ignored)
 
     def load_ignored(self):
-        if os.path.exists(IGNORED_FILE):
-            with open(IGNORED_FILE, "r") as f:
-                return set(line.strip() for line in f if line.strip())
-        return set()
+        try:
+            ignored_str = config.get("1-Wire", "ignored", fallback="")
+            return set(s.strip() for s in ignored_str.split(",") if s.strip())
+        except Exception as e:
+            print(f"Fehler beim Laden ignorierter Sensoren: {e}")
+            return set()
 
     def save_ignored(self):
-        with open(IGNORED_FILE, "w") as f:
-            f.write("\n".join(self.ignored))
+        try:
+            ignored_str = ", ".join(sorted(self.ignored))
+            config.set("1-Wire", "ignored", ignored_str)
+        except Exception as e:
+            print(f"Fehler beim Speichern ignorierter Sensoren: {e}")
 
     def get_missing_sensors(self):
         missing = []

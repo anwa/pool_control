@@ -57,7 +57,7 @@ class PoolControlApp(App):
 
     def _handle_sensor_decision(self, sensor_id, action):
         if action == "delete":
-            config.remove_option("1-Wire", sensor_id)
+            config.delete_sensor(sensor_id)
         elif action == "ignore":
             self.reader.ignore_sensor(sensor_id)
         # "keep" → nichts tun
