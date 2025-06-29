@@ -60,7 +60,7 @@ class MessungPage(BoxLayout):
         if name == "p_in" or name == "p_out":
             self.p_diff = self.p_out - self.p_in
 
-    def read_temperatures(self):
+    def read_temperatures(self, dt):
         values = self.reader.read_all()
 
         self.pool_temp2 = values.get("Pool")

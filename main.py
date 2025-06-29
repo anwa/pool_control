@@ -11,10 +11,13 @@ from kivy.config import Config
 from kivy.lang import Builder
 
 # from kivy.clock import Clock
-from gui.missing_sensor_popup import MissingSensorPopup
-from gui.new_sensor_popup import NewSensorPopup
+#from gui.missing_sensor_popup import MissingSensorPopup
+#from gui.new_sensor_popup import NewSensorPopup
 from gui.main import MainScreen
-
+from gui.sensor_popup import (
+    show_missing_sensors_popup,
+    show_new_sensor_popup
+)
 # sudo raspi-config
 # Display Options -> Resolution -> DMT Mode 87 1024x600 60Hz
 Config.set("graphics", "width", "1024")
@@ -31,9 +34,28 @@ class PoolControlApp(App):
         self.title = "Pool Control"
         self.icon = "gui/icons/pool.png"
         Builder.load_file("gui/main.kv")
-        # self.root = MainScreen()
-        # Clock.schedule_interval(self.root.update_time, 1)
-        # return self.root
+        #return MainScreen()
+        # Neue Sensoren vorhanden?
+        new_sensors = self.reader.get_new_sensor_info()
+        if new_sensors:
+            show_new_sensor_popup(new_sensors, self.reader, self.continue_after_sensor_check)
+            return  # GUI erst nach Popup laden
+
+        # Fehlende Sensoren?
+        missing_sensors = self.reader.get_missing_sensors()
+        if missing_sensors:
+            show_missing_sensors_popup(missing_sensors, self.reader, self.continue_after_sensor_check)
+            return
+
+        # Keine Probleme → GUI sofort starten
+        return self.build_main_ui()
+
+    def continue_after_sensor_check(self):
+        # Wird von den Popups aufgerufen, wenn fertig
+        self.root = self.build_main_ui()
+
+    def build_main_ui(self):
+        logger.info("Application started (GUI geladen).")
         return MainScreen()
 
     def on_start(self):
